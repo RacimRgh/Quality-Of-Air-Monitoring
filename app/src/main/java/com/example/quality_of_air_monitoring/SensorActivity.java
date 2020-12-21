@@ -22,7 +22,7 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
     private ProgressBar progressBar;
     private int pStatus = 0;
     private Handler handler = new Handler();
-    ;
+    private float lux;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,10 +34,31 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
         if( mTemp != null)
         {
             // The sensors exists
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (pStatus <= 100) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setProgress((int)lux);
+                                txtProgress.setText(lux + " °C");
+                            }
+                        });
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        //pStatus++;
+                    }
+                }
+            }).start();
         }
         else
         {
             //Sensor unavailable
+            txtProgress.setText("Temperature sensor unavailable !");
         }
 
     }
@@ -46,31 +67,11 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
     public void onSensorChanged(SensorEvent event) {
         // The light sensor returns a single value.
         // Many sensors return 3 values, one for each axis.
-        float lux = event.values[0];
+        lux = event.values[0];
         txtProgress = (TextView) findViewById(R.id.txtProgress);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (pStatus <= 100) {
-                    handler.post(new Runnable() {
-                        @Override
-                        public void run() {
-                            progressBar.setProgress((int)lux);
-                            txtProgress.setText(lux + " °C");
-                        }
-                    });
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    //pStatus++;
-                }
-            }
-        }).start();
-        // Do something with this sensor value.
+
     }
 
     @Override
