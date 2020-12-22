@@ -37,20 +37,20 @@ public class SensorActivity extends AppCompatActivity implements SensorEventList
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while (pStatus <= 100) {
+                    while (pStatus <= (int)lux) {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                progressBar.setProgress((int)lux);
-                                txtProgress.setText(lux + " °C");
+                                progressBar.setProgress((int)pStatus);
+                                txtProgress.setText(pStatus + " °C");
                             }
                         });
                         try {
-                            Thread.sleep(100);
+                            Thread.sleep(50);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        //pStatus++;
+                        pStatus++;
                     }
                 }
             }).start();
