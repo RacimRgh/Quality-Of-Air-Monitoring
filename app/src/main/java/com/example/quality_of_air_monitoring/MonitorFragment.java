@@ -1,13 +1,16 @@
 package com.example.quality_of_air_monitoring;
 
+import android.content.Intent;
+import android.hardware.Sensor;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.quality_of_air_monitoring.R;
+import android.widget.Button;
+import android.widget.Toast;
 
-//import com.bottomnavigationview.R
+import com.example.quality_of_air_monitoring.R;
 
 public class MonitorFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
@@ -44,11 +47,28 @@ public class MonitorFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        //Intent intent = new Intent(getActivity(), SensorActivity.class);
+        //startActivity(intent);
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        // getView() works only after onCreateView()
+        // W can't use it inside onCreate() or onCreateView() methods of the fragment
+
+
+        View view = inflater.inflate(R.layout.fragment_monitor, container, false);
+
+        Button button = (Button) view.findViewById(R.id.buttonMonitor);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), SensorActivity.class);
+                startActivity(intent);
+            }
+        });
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_monitor, container, false);
+        return view;
     }
 }
