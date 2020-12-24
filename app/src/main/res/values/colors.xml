@@ -19,4 +19,10 @@
     <color name="tab_indicator_gray">#c0c0c0</color>
     <color name="intro_title_color">#000000</color>
     <color name="intro_description_color">#656565</color>
+
+    <!-- Menu colors -->
+    <color name="colorAccentDark">#4aa87a</color>
+    <color name="colorPrimaryTab">#008577</color>
+    <color name="colorPrimaryDarkTab">#00574B</color>
+    <color name="colorAccentTab">#D81B60</color>
 </resources>

@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Quality-Of-Air-Monitoring</string>
+    <string name="bottom_navigation_menu_addresses">Addresses</string>
+    <string name="bottom_navigation_menu_monitoring">Monitoring</string>
+    <string name="bottom_navigation_menu_history">History</string>
+<!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
