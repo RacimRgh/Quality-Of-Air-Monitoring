@@ -9,9 +9,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.QualityOfAirMonitoring">
-        <activity android:name=".MainActivity"> </activity>
         <activity android:name=".SplashScreen" />
         <activity android:name=".SensorActivity" />
+        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".AccountActivity" />
         <activity android:name=".IntroActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
