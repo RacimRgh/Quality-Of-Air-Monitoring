@@ -1,18 +1,35 @@
 package com.example.quality_of_air_monitoring;
 
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.quality_of_air_monitoring.R;
 
-public class MonitorFragment extends Fragment {
+public class MonitorFragment extends Fragment implements SensorEventListener {
+
+    private SensorManager sensorManager;
+    private Sensor mTemp;
+    private TextView txtProgress;
+    private ProgressBar progressBar;
+    private int pStatus = 0;
+    private Handler handler = new Handler();
+    private float lux;
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -48,6 +65,38 @@ public class MonitorFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
+        sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        mTemp = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        if( mTemp != null)
+        {
+            // The sensors exists
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (pStatus <= (int)lux) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setProgress((int)pStatus);
+                                txtProgress.setText(pStatus + " °C");
+                            }
+                        });
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        pStatus++;
+                    }
+                }
+            }).start();
+        }
+        else
+        {
+            //Sensor unavailable
+            txtProgress.setText("Temperature sensor unavailable !");
+        }
+
         //Intent intent = new Intent(getActivity(), SensorActivity.class);
         //startActivity(intent);
     }
@@ -57,7 +106,6 @@ public class MonitorFragment extends Fragment {
                              Bundle savedInstanceState) {
         // getView() works only after onCreateView()
         // W can't use it inside onCreate() or onCreateView() methods of the fragment
-
 
         View view = inflater.inflate(R.layout.fragment_monitor, container, false);
 
@@ -70,5 +118,31 @@ public class MonitorFragment extends Fragment {
         });
         // Inflate the layout for this fragment
         return view;
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        // The light sensor returns a single value.
+        // Many sensors return 3 values, one for each axis.
+        lux = event.values[0];
+        txtProgress = (TextView) getView().findViewById(R.id.txtProgress);
+        progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, mTemp, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
     }
 }
