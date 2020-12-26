@@ -11,6 +11,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.util.Log;
@@ -43,6 +44,9 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
 
     private Double lat;
     private Double lgt;
+
+    private SwipeRefreshLayout swipeContainer;
+
     public MonitorFragment() {
         // Required empty public constructor
     }
@@ -139,6 +143,22 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
             e.printStackTrace();
         }
         Log.d("MonitorActivity", "Latitude: "+ lat + " - Longitude: " + lgt);
+
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
+
+        // Setup refresh listener which triggers new data loading
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                // Make sure you call swipeContainer.setRefreshing(false)
+                //fetchTimelineAsync(0);
+                //Bundle tempBundle = new Bundle();
+                //onCreate(tempBundle);
+                swipeContainer.setRefreshing(false);
+            }
+        });
 
         // Inflate the layout for this fragment
         return view;
