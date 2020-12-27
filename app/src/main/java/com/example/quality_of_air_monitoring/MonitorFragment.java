@@ -212,7 +212,6 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         {
             // The relative humidity sensor returns a single value.
             hmd = event.values[0];
-            Log.d("Humidity: ", "Value: " +  hmd);
         }
     }
 
