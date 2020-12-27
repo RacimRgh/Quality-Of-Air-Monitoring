@@ -6,10 +6,15 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +24,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.quality_of_air_monitoring.R;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 public class MonitorFragment extends Fragment implements SensorEventListener {
 
@@ -30,30 +39,23 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
     private Handler handler = new Handler();
     private float lux;
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
+    private Double lat;
+    private Double lgt;
+
+    private SwipeRefreshLayout swipeContainer;
+
     public MonitorFragment() {
         // Required empty public constructor
     }
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment MonitorFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static MonitorFragment newInstance(String param1, String param2) {
+
+    public static MonitorFragment newInstance(Double lat, Double lgt) {
         MonitorFragment fragment = new MonitorFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putDouble(ARG_PARAM1, lat);
+        args.putDouble(ARG_PARAM2, lgt);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,8 +63,8 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            lat = getArguments().getDouble(ARG_PARAM1);
+            lgt = getArguments().getDouble(ARG_PARAM2);
         }
 
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
@@ -116,6 +118,48 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
                 startActivity(intent);
             }
         });
+        TextView adTextView = view.findViewById(R.id.addressTextView);
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+        try{
+            List<Address> addresses = geocoder.getFromLocation(lat, lgt, 1);
+            if(addresses.isEmpty()){
+                adTextView.setText("Latitude: "+ lat + " - Longitude: " + lgt);
+            } else {
+                String address = addresses.get(0).getAddressLine(0);
+                //String city = addresses.get(0).getLocality();
+                //String country = addresses.get(0).getCountryName();
+                //String postalCode = addresses.get(0).getPostalCode();
+
+                String text = address + ", ";
+                /*if (postalCode != null && city != null) {
+                    text += postalCode + " " + city + ", ";
+                }
+                text += country;
+                */
+                Log.d("MonitorActivity2", "Address: "+ text);
+                adTextView.setText(text);
+            }
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+        Log.d("MonitorActivity", "Latitude: "+ lat + " - Longitude: " + lgt);
+
+        swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
+
+        // Setup refresh listener which triggers new data loading
+
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+
+            @Override
+            public void onRefresh() {
+                // Make sure you call swipeContainer.setRefreshing(false)
+                //fetchTimelineAsync(0);
+                //Bundle tempBundle = new Bundle();
+                //onCreate(tempBundle);
+                swipeContainer.setRefreshing(false);
+            }
+        });
+
         // Inflate the layout for this fragment
         return view;
     }
