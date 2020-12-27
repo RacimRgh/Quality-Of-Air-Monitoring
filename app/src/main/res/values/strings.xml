@@ -18,4 +18,14 @@
     <string name="register">Register</string>
     <string name="re_type_password">Re-type Password</string>
     <string name="your_name">Full Name</string>
+
+    <!-- Strings user for login and registering validation -->
+    <string name="error_message_name">Enter Full Name</string>
+    <string name="error_message_email">Enter Valid Email</string>
+    <string name="error_message_age">Enter Age</string>
+    <string name="error_message_password">Enter Password</string>
+    <string name="success_message">Registration Successful</string>
+    <string name="error_email_exists">Email Already Exists</string>
+    <string name="error_password_match">Passwords does not Match</string>
+    <string name="error_valid_email_password">Wrong Email or Password</string>
 </resources>

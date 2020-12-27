@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/reg_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -32,60 +33,65 @@
         android:layout_marginBottom="50dp"
         android:layout_marginLeft="25dp" />
 
-    <EditText
-        android:id="@+id/et_name"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/registerName"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="@string/your_name"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="10dp"
-        android:padding="15dp"
-        android:inputType="textPersonName"
-        android:fontFamily="@font/roboto_regular"
-        android:background="@drawable/et_custom"
-        android:textSize="15sp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/registerNameEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/your_name"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="@android:color/black" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/et_email"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/registerEmail"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="@string/e_mail"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="10dp"
-        android:padding="15dp"
-        android:fontFamily="@font/roboto_regular"
-        android:inputType="textEmailAddress"
-        android:background="@drawable/et_custom"
-        android:textSize="15sp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/registerEmailEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/e_mail"
+            android:inputType="text"
+            android:maxLines="1"
+            android:textColor="@android:color/black" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/et_password"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/registerPassword"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="@string/password"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:layout_marginBottom="10dp"
-        android:padding="15dp"
-        android:fontFamily="@font/roboto_regular"
-        android:inputType="textPassword"
-        android:background="@drawable/et_custom"
-        android:textSize="15sp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/registerPasswordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textColor="@android:color/black" />
+    </com.google.android.material.textfield.TextInputLayout>
 
-    <EditText
-        android:id="@+id/et_repassword"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/registerConfirmPassword"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:hint="@string/re_type_password"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:padding="15dp"
-        android:fontFamily="@font/roboto_regular"
-        android:inputType="textPassword"
-        android:background="@drawable/et_custom"
-        android:textSize="15sp" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/registerConfirmPasswordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/re_type_password"
+            android:inputType="textPassword"
+            android:maxLines="1"
+            android:textColor="@android:color/black" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
