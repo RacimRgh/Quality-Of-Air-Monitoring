@@ -56,7 +56,13 @@ public class LoginFragment extends Fragment {
         Button btnLogin = (Button) view.findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                verifyAccount();
+                /**
+                 * FOR TESTING ONLY
+                 * UNCOMMENT verifyAccount() and comment the rest for real app
+                 */
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+                //verifyAccount();
             }
         });
         return view;

@@ -13,7 +13,7 @@
     <string name="login">Login</string>
     <string name="password">Password</string>
     <string name="e_mail">Email</string>
-    <string name="tag">Let\'s join us and \nBuild your relationship with others</string>
+    <string name="tag">It\'s time for a healthy home \nJoin us and start today !</string>
     <string name="swipe_right_for_login">Swipe Right for Login</string>
     <string name="register">Register</string>
     <string name="re_type_password">Re-type Password</string>
@@ -21,11 +21,10 @@
 
     <!-- Strings user for login and registering validation -->
     <string name="error_message_name">Enter Full Name</string>
-    <string name="error_message_email">Enter Valid Email</string>
-    <string name="error_message_age">Enter Age</string>
+    <string name="error_message_email">Enter valid Email</string>
     <string name="error_message_password">Enter Password</string>
-    <string name="success_message">Registration Successful</string>
-    <string name="error_email_exists">Email Already Exists</string>
-    <string name="error_password_match">Passwords does not Match</string>
+    <string name="success_message">Registration successful !</string>
+    <string name="error_email_exists">Email already exists</string>
+    <string name="error_password_match">Passwords does not match</string>
     <string name="error_valid_email_password">Wrong Email or Password</string>
 </resources>

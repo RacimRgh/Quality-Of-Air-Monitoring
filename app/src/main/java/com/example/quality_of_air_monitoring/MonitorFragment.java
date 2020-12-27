@@ -32,12 +32,13 @@ import java.util.Locale;
 public class MonitorFragment extends Fragment implements SensorEventListener {
 
     private SensorManager sensorManager;
-    private Sensor mTemp;
-    private TextView txtProgress;
-    private ProgressBar progressBar;
-    private int pStatus = 0;
+    private Sensor mTemp, mHumd;
+    private TextView txtProgress, txtProgressHmd;
+    private ProgressBar progressBar, progressBarHmd;
+    private int pStatus = 0, hStatus = 0;
     private Handler handler = new Handler();
-    private float lux;
+    private Handler handlerHumd = new Handler();
+    private float tmp, hmd;
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -69,13 +70,14 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
 
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mTemp = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        mHumd = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
         if( mTemp != null)
         {
             // The sensors exists
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while (pStatus <= (int)lux) {
+                    while (pStatus <= (int)tmp) {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
@@ -97,6 +99,36 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         {
             //Sensor unavailable
             txtProgress.setText("Temperature sensor unavailable !");
+        }
+
+        if( mHumd != null)
+        {
+            // The sensors exists
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (hStatus <= (int)hmd) {
+                        handlerHumd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBarHmd.setProgress((int)hStatus);
+                                txtProgressHmd.setText(hStatus + " %");
+                            }
+                        });
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        hStatus++;
+                    }
+                }
+            }).start();
+        }
+        else
+        {
+            //Sensor unavailable
+            txtProgressHmd.setText("Humidity sensor unavailable !");
         }
 
         //Intent intent = new Intent(getActivity(), SensorActivity.class);
@@ -136,13 +168,13 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
                 }
                 text += country;
                 */
-                Log.d("MonitorActivity2", "Address: "+ text);
+                //Log.d("MonitorActivity2", "Address: "+ text);
                 adTextView.setText(text);
             }
         } catch(IOException e){
             e.printStackTrace();
         }
-        Log.d("MonitorActivity", "Latitude: "+ lat + " - Longitude: " + lgt);
+        //Log.d("MonitorActivity", "Latitude: "+ lat + " - Longitude: " + lgt);
 
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
 
@@ -166,11 +198,22 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        // The light sensor returns a single value.
-        // Many sensors return 3 values, one for each axis.
-        lux = event.values[0];
         txtProgress = (TextView) getView().findViewById(R.id.txtProgress);
         progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
+        txtProgressHmd = (TextView) getView().findViewById(R.id.txtProgressHumd);
+        progressBarHmd = (ProgressBar) getView().findViewById(R.id.progressBarHumd);
+        Log.d("Type: ", ""+event.sensor.getType());
+        if(event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE)
+        {
+            // The ambient temperature sensor returns a single value.
+            tmp = event.values[0];
+        }
+        if(event.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY)
+        {
+            // The relative humidity sensor returns a single value.
+            hmd = event.values[0];
+            Log.d("Humidity: ", "Value: " +  hmd);
+        }
     }
 
     @Override
@@ -182,6 +225,7 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
     public void onResume() {
         super.onResume();
         sensorManager.registerListener(this, mTemp, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, mHumd, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
