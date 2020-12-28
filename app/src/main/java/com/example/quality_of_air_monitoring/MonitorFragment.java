@@ -168,7 +168,7 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
                 }
                 text += country;
                 */
-                //Log.d("MonitorActivity2", "Address: "+ text);
+                Log.d("MonitorActivity2", "Address: "+ text);
                 adTextView.setText(text);
             }
         } catch(IOException e){
@@ -202,7 +202,7 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
         txtProgressHmd = (TextView) getView().findViewById(R.id.txtProgressHumd);
         progressBarHmd = (ProgressBar) getView().findViewById(R.id.progressBarHumd);
-        Log.d("Type: ", ""+event.sensor.getType());
+        //Log.d("Type: ", ""+event.sensor.getType());
         if(event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE)
         {
             // The ambient temperature sensor returns a single value.
