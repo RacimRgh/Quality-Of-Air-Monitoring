@@ -75,11 +75,69 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         mTemp = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         mHumd = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
 
-        //Intent intent = new Intent(getActivity(), SensorActivity.class);
-        //startActivity(intent);
+        if( mTemp != null)
+        {
+            // The sensors exists
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (pStatus <= (int)tmp) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setProgress((int)pStatus);
+                                txtProgress.setText(pStatus + " °C");
+                            }
+                        });
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        pStatus++;
+                    }
+                }
+            }).start();
+        }
+        else
+        {
+            //Sensor unavailable
+            txtProgress.setText("Temperature sensor unavailable !");
+        }
+
+        if( mHumd != null)
+        {
+            // The sensors exists
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (hStatus <= (int)hmd) {
+                        handlerHumd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBarHmd.setProgress((int)hStatus);
+                                txtProgressHmd.setText(hStatus + " %");
+                            }
+                        });
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        hStatus++;
+                    }
+                }
+            }).start();
+        }
+        else
+        {
+            //Sensor unavailable
+            txtProgressHmd.setText("Humidity sensor unavailable !");
+        }
+
     }
 
-    @Override
+   /* @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         if( mTemp != null)
         {
@@ -140,7 +198,7 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
             //Sensor unavailable
             txtProgressHmd.setText("Humidity sensor unavailable !");
         }
-    }
+    } */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -149,11 +207,6 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         // W can't use it inside onCreate() or onCreateView() methods of the fragment
 
         View view = inflater.inflate(R.layout.fragment_monitor, container, false);
-
-        txtProgress = (TextView) view.findViewById(R.id.txtProgress);
-        progressBar = (ProgressBar) view.findViewById(R.id.progressBar);
-        txtProgressHmd = (TextView) view.findViewById(R.id.txtProgressHumd);
-        progressBarHmd = (ProgressBar) view.findViewById(R.id.progressBarHumd);
 
         Button button = (Button) view.findViewById(R.id.buttonMonitor);
         button.setOnClickListener(new View.OnClickListener() {
@@ -198,7 +251,6 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
 
             @Override
             public void onRefresh() {
-                // Make sure you call swipeContainer.setRefreshing(false)
                 //fetchTimelineAsync(0);
                 //Bundle tempBundle = new Bundle();
                 //onCreate(tempBundle);
