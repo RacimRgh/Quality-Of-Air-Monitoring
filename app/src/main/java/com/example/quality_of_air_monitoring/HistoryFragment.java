@@ -1,6 +1,7 @@
 package com.example.quality_of_air_monitoring;
 
 import android.graphics.Color;
+import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -20,6 +21,7 @@ import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -51,8 +53,7 @@ public class HistoryFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private LineChart chartgraph;
-    private LineChart chartgraph2;
+    private LineChart chart;
 
     public HistoryFragment() {
         // Required empty public constructor
@@ -85,11 +86,86 @@ public class HistoryFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        chartgraph = (LineChart) (view.findViewById(R.id.chart));
-        //chartgraph2 = view.findViewById(R.id.chart2);
-        setUp();
+        chart = (LineChart) (view.findViewById(R.id.chart));
+        charTest();
     }
 
+    
+    public void charTest(){
+
+        chart.setDrawGridBackground(false);
+        chart.getDescription().setEnabled(true);
+        chart.getDescription().setText("Variation of the temperature and humidity over time");
+        chart.getDescription().setTextSize(20f);
+        chart.getDescription().setTextAlign(Paint.Align.CENTER);
+        chart.setDrawBorders(true);
+
+        chart.getAxisLeft().setEnabled(false);
+        chart.getAxisRight().setDrawAxisLine(false);
+        chart.getAxisRight().setDrawGridLines(false);
+        chart.getXAxis().setDrawAxisLine(false);
+        chart.getXAxis().setDrawGridLines(false);
+        chart.getXAxis().setSpaceMax(1f);
+        chart.getXAxis().setSpaceMin(1f);
+        //chart.getAxisLeft().setAxisMinimum(0);
+        //chart.getAxisLeft().setAxisMaximum(100);
+
+        // enable touch gestures
+        chart.setTouchEnabled(true);
+
+        // enable scaling and dragging
+        chart.setDragEnabled(true);
+        chart.setScaleEnabled(true);
+
+        // if disabled, scaling can be done on x- and y-axis separately
+        chart.setPinchZoom(false);
+
+        Legend l = chart.getLegend();
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.TOP);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.RIGHT);
+        l.setOrientation(Legend.LegendOrientation.VERTICAL);
+        l.setDrawInside(false);
+        l.setTextSize(12f);
+
+        DatabaseHelper db = new DatabaseHelper(getContext());
+        List<Weather> list = db.getAllRows();
+        for(Weather w : list)
+        {
+            String log = "\n-Long: " + w.getLon() + "\n-Lat: " + w.getLat() + "\n-Date: " + w.getDate() + "\n-Humidity: " + w.getHmd() + "\n-Temperature: "+w.getTmp();
+            Log.d("***********", log);
+        }
+
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
+        String label = "Temperature";
+        int color = Color.RED;
+        for (int z = 0; z < 2; z++) {
+
+            ArrayList<Entry> values = new ArrayList<>();
+
+            for (int i = 0; i < 6; i++) {
+                double val = (Math.random() * 100);
+                values.add(new Entry(i, (float) val));
+            }
+
+            LineDataSet d = new LineDataSet(values, label);
+            d.setLineWidth(2.5f);
+            d.setCircleRadius(6f);
+            d.setValueTextSize(10f);
+            d.setColor(color);
+            d.setCircleColor(color);
+            dataSets.add(d);
+            color = Color.BLUE;
+            label = "Humidity";
+        }
+
+        LineData data = new LineData(dataSets);
+        //chart.setVisibleXRange(100,100);
+        chart.setData(data);
+        //chart.setViewPortOffsets(0f, 0f, 0f, 0f);
+        chart.animateXY(2000, 2000);
+        chart.invalidate();
+    }
+    
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void setUp(){
         DatabaseHelper dbhelper = new DatabaseHelper(getContext());
@@ -123,9 +199,9 @@ public class HistoryFragment extends Fragment {
             //public int getDecimalDigits() {  return 0; }
         };
 
-        //XAxis xAxis = chartgraph.getXAxis();
-        //xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
-        //xAxis.setValueFormatter(formatter);
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
+        xAxis.setValueFormatter(formatter);
 
         Entry c1e1 = new Entry(0f, 100f); // 0 == quarter 1
         valsComp1.add(c1e1);
@@ -162,9 +238,9 @@ public class HistoryFragment extends Fragment {
         LineData data = new LineData(dataSets);
 
         /*********************Styling***********************************************/
-        XAxis xAxis;
+
         {   // // X-Axis Style // //
-            xAxis = chartgraph.getXAxis();
+            xAxis = chart.getXAxis();
 
             // vertical grid lines
             xAxis.enableGridDashedLine(10f, 10f, 0f);
@@ -172,10 +248,10 @@ public class HistoryFragment extends Fragment {
 
         YAxis yAxis;
         {   // // Y-Axis Style // //
-            yAxis = chartgraph.getAxisLeft();
+            yAxis = chart.getAxisLeft();
 
             // disable dual axis (only use LEFT axis)
-            chartgraph.getAxisRight().setEnabled(false);
+            chart.getAxisRight().setEnabled(false);
 
             // horizontal grid lines
             yAxis.enableGridDashedLine(10f, 10f, 0f);
@@ -186,17 +262,33 @@ public class HistoryFragment extends Fragment {
         }
 
 
-        chartgraph.setData(data);
-        chartgraph.invalidate(); // refresh
+        chart.setData(data);
+        chart.getDescription().setEnabled(true);
+        chart.getDescription().setText("Temperature and humidity values in the last 6 calculations");
+        chart.getDescription().setTextSize(20f);
+        chart.getDescription().setTextColor(Color.BLACK);
+        chart.getDescription().setTextAlign(Paint.Align.CENTER);
+
+        Legend l = chart.getLegend();
+        l.setForm(Legend.LegendForm.LINE);
+        l.setTextSize(11f);
+        l.setTextColor(Color.BLACK);
+        l.setVerticalAlignment(Legend.LegendVerticalAlignment.BOTTOM);
+        l.setHorizontalAlignment(Legend.LegendHorizontalAlignment.LEFT);
+        l.setOrientation(Legend.LegendOrientation.HORIZONTAL);
+        l.setDrawInside(false);
+
+        chart.animateXY(2000, 2000);
+        chart.invalidate(); // refresh
 
         /*******************************************************************/
 
         /*BarData data = new BarData(bardataset);
-        chartgraph.setData(data); // set the data and list of labels into chart
-        chartgraph.setDescription(null);
-        //chartgraph.setDescription((Description)(R.string.chart_description1));  // set the description
+        chart.setData(data); // set the data and list of labels into chart
+        chart.setDescription(null);
+        //chart.setDescription((Description)(R.string.chart_description1));  // set the description
         bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
-        chartgraph.animateY(5000); */
+        chart.animateY(5000); */
         
         /*for (int i=0; i<list.size(); i++) {
         /*
@@ -237,10 +329,10 @@ public class HistoryFragment extends Fragment {
         dataSets.add(barhmd);
 
         BarData data = new BarData(bardate, bartemp);
-        chartgraph.setData(data);
-       //chartgraph.setDescription("Temp evolution");
-        chartgraph.animateXY(2000, 2000);
-        chartgraph.invalidate(); */
+        chart.setData(data);
+       //chart.setDescription("Temp evolution");
+        chart.animateXY(2000, 2000);
+        chart.invalidate(); */
 
         //BarData data2 = new BarData(bardate, barhmd);
         //chartgraph2.setData(data);
