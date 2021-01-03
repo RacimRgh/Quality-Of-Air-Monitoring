@@ -1,7 +1,6 @@
 package com.example.quality_of_air_monitoring;
 
 import android.content.Context;
-import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -14,11 +13,9 @@ import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -55,6 +52,19 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         // Required empty public constructor
     }
 
+    public String getCity (List<Address> addresses) {
+        String city = addresses.get(0).getLocality();
+        return city;
+    }
+
+    public Double getLong () {
+        return lgt;
+    }
+
+    public static String getCurrentDate(){
+        return CurrentDate;
+    }
+
     public static MonitorFragment newInstance(Double lat, Double lgt) {
         MonitorFragment fragment = new MonitorFragment();
         Bundle args = new Bundle();
@@ -63,6 +73,73 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         fragment.setArguments(args);
         return fragment;
     }
+
+    // Function to display temperature progress bar
+    public void tempBar(Sensor mTemp, float tmp){
+        if( mTemp != null)
+        {
+            // The sensors exists
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (pStatus <= (int)tmp) {
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBar.setProgress((int)pStatus);
+                                txtProgress.setText(pStatus + " °C");
+                            }
+                        });
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        pStatus++;
+                    }
+                }
+            }).start();
+        }
+        else
+        {
+            //Sensor unavailable
+            txtProgress.setText("Temperature sensor unavailable !");
+        }
+    }
+
+    // Function to display humidity progress bar
+    public void humdBar(Sensor mHumd, float hmd){
+        if( mHumd != null)
+        {
+            // The sensors exists
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (hStatus <= (int)hmd) {
+                        handlerHumd.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                progressBarHmd.setProgress((int)hStatus);
+                                txtProgressHmd.setText(hStatus + " %");
+                            }
+                        });
+                        try {
+                            Thread.sleep(50);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        hStatus++;
+                    }
+                }
+            }).start();
+        }
+        else
+        {
+            //Sensor unavailable
+            txtProgressHmd.setText("Humidity sensor unavailable !");
+        }
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,147 +151,24 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mTemp = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         mHumd = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-
-        if( mTemp != null)
-        {
-            // The sensors exists
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (pStatus <= (int)tmp) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressBar.setProgress((int)pStatus);
-                                txtProgress.setText(pStatus + " °C");
-                            }
-                        });
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        pStatus++;
-                    }
-                }
-            }).start();
-        }
-        else
-        {
-            //Sensor unavailable
-            txtProgress.setText("Temperature sensor unavailable !");
-        }
-
-        if( mHumd != null)
-        {
-            // The sensors exists
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (hStatus <= (int)hmd) {
-                        handlerHumd.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressBarHmd.setProgress((int)hStatus);
-                                txtProgressHmd.setText(hStatus + " %");
-                            }
-                        });
-                        try {
-                            Thread.sleep(50);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        hStatus++;
-                    }
-                }
-            }).start();
-        }
-        else
-        {
-            //Sensor unavailable
-            txtProgressHmd.setText("Humidity sensor unavailable !");
-        }
-
+        tempBar(mTemp, tmp);
+        humdBar(mHumd, hmd);
     }
 
    /* @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        if( mTemp != null)
-        {
-            // The sensors exists
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (pStatus <= (int)tmp) {
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressBar.setProgress((int)pStatus);
-                                txtProgress.setText(pStatus + " °C");
-                            }
-                        });
-                        try {
-                            Thread.sleep(50000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        pStatus++;
-                    }
-                }
-            }).start();
-        }
-        else
-        {
-            //Sensor unavailable
-            txtProgress.setText("Temperature sensor unavailable !");
-        }
-
-        if( mHumd != null)
-        {
-            // The sensors exists
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (hStatus <= (int)hmd) {
-                        handlerHumd.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                progressBarHmd.setProgress((int)hStatus);
-                                txtProgressHmd.setText(hStatus + " %");
-                            }
-                        });
-                        try {
-                            Thread.sleep(50000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        hStatus++;
-                    }
-                }
-            }).start();
-        }
-        else
-        {
-            //Sensor unavailable
-            txtProgressHmd.setText("Humidity sensor unavailable !");
-        }
+        tempBar(mTemp, tmp);
+        humdBar(mHumd, hmd);
     } */
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // getView() works only after onCreateView()
-        // W can't use it inside onCreate() or onCreateView() methods of the fragment
+        // We can't use it inside onCreate() or onCreateView() methods of the fragment
 
         View view = inflater.inflate(R.layout.fragment_monitor, container, false);
 
-        Button button = (Button) view.findViewById(R.id.buttonMonitor);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), SensorActivity.class);
-                startActivity(intent);
-            }
-        });
         TextView adTextView = view.findViewById(R.id.addressTextView);
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
         try{
@@ -242,11 +196,9 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
 
 
         //Log.d("MonitorActivity", "Latitude: "+ lat + " - Longitude: " + lgt);
-
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
 
         // Setup refresh listener which triggers new data loading
-
         swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 
             @Override
@@ -260,15 +212,6 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
 
         // Inflate the layout for this fragment
         return view;
-    }
-
-    public String getCity (List<Address> addresses) {
-        String city = addresses.get(0).getLocality();
-        return city;
-    }
-
-    public Double getLong () {
-        return lgt;
     }
 
     static String CurrentDate;
@@ -295,10 +238,6 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         Weather weather = new Weather(lat, lgt, CurrentDate, hmd, tmp);
         DatabaseHelper db = new DatabaseHelper(getContext());
         db.addWeather(weather);
-    }
-
-    public static String getCurrentDate(){
-        return CurrentDate;
     }
 
     @Override

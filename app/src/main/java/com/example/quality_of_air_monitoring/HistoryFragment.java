@@ -290,8 +290,8 @@ public class HistoryFragment extends Fragment {
         bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
         chart.animateY(5000); */
         
-        /*for (int i=0; i<list.size(); i++) {
         /*
+        for (int i=0; i<list.size(); i++) {
             try {
                 Date date1=new SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss").parse(list.get(i).getDate());
             } catch (ParseException e) {
@@ -315,29 +315,6 @@ public class HistoryFragment extends Fragment {
             listtemper.add(vtem);
 
         }
-
-        BarDataSet bartemp = new BarDataSet(listtemper, "temperature");
-        bartemp.setColor(Color.rgb(0, 155, 0));
-        BarDataSet barhmd = new BarDataSet(listhumid, "humidity");
-        barhmd.setColor(Color.rgb(0, 0, 155));
-
-        BarDataSet bardate = new BarDataSet(listdate, "date");
-        barhmd.setColor(Color.rgb(0, 0, 155));
-
-        ArrayList dataSets = new ArrayList();
-        dataSets.add(bartemp);
-        dataSets.add(barhmd);
-
-        BarData data = new BarData(bardate, bartemp);
-        chart.setData(data);
-       //chart.setDescription("Temp evolution");
-        chart.animateXY(2000, 2000);
-        chart.invalidate(); */
-
-        //BarData data2 = new BarData(bardate, barhmd);
-        //chartgraph2.setData(data);
-        //chartgraph2.setDescription("Humidity evolution");
-        //chartgraph2.animateXY(2000, 2000);
-        //chartgraph2.invalidate();
+        */
     }
 }

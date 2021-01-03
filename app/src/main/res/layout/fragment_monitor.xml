@@ -23,6 +23,16 @@
         android:textSize="20sp"
         android:textStyle="bold"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:background="@color/colorPrimaryTab"
+        android:fontFamily="@font/roboto_regular"
+        android:layout_gravity="left"
+        android:textSize="17dp"
+        android:text="@string/temperature"/>
+
     <RelativeLayout
         android:id="@+id/relativeLayout2"
         android:layout_width="wrap_content"
@@ -54,6 +64,16 @@
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </RelativeLayout>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:background="@color/colorPrimaryTab"
+        android:fontFamily="@font/roboto_regular"
+        android:layout_gravity="left"
+        android:textSize="17dp"
+        android:text="@string/humidity"/>
+
     <RelativeLayout
         android:id="@+id/relativeLayout3"
         android:layout_width="wrap_content"
@@ -83,11 +103,5 @@
             android:layout_centerInParent="true"
             android:textAppearance="?android:attr/textAppearanceSmall" />
     </RelativeLayout>
-
-    <Button
-        android:id="@+id/buttonMonitor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Start Monitoring" />
 </LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
