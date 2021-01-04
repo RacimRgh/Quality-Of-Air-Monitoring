@@ -52,6 +52,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+
 public class HistoryFragment extends Fragment {
 
     private LineChart chart;
@@ -92,6 +93,7 @@ public class HistoryFragment extends Fragment {
         @Override
         protected void drawLabel(Canvas c, String formattedLabel, float x, float y, MPPointF anchor, float angleDegrees) {
             String line[] = formattedLabel.split("\n");
+            Log.d("Line: ", line[0]);
             Utils.drawXAxisValue(c, line[0], x, y, mAxisLabelPaint, anchor, angleDegrees);
             Utils.drawXAxisValue(c, line[1], x + mAxisLabelPaint.getTextSize(), y + mAxisLabelPaint.getTextSize(), mAxisLabelPaint, anchor, angleDegrees);
         }
@@ -155,7 +157,6 @@ public class HistoryFragment extends Fragment {
         int j=0;
 
         //final String[] quarters = new String[] { "Q1", "Q2", "Q3", "Q4" };
-        chart.setXAxisRenderer(new CustomXAxisRenderer(chart.getViewPortHandler(), chart.getXAxis(), chart.getTransformer(YAxis.AxisDependency.LEFT)));
         IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
             @Override
@@ -193,9 +194,9 @@ public class HistoryFragment extends Fragment {
                 try {
                     dateFormatter = new SimpleDateFormat("dd-MM-yyyy 'at' HH:mm:ss", Locale.getDefault());
                     date = dateFormatter.parse(w.getDate());
-                    //Log.d("Time: ", ""+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds());
                     int month = date.getMonth();
                     String mo =  new DateFormatSymbols().getMonths()[month];
+                    Log.d("Time: ", ""+date.getDay()+"-"+mo.substring(0,3)+"_"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds());
                     hours.set(j, date.getDay()+"-"+mo.substring(0,3)+"\n"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds());
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -224,6 +225,7 @@ public class HistoryFragment extends Fragment {
         LineData data = new LineData(dataSets);
         //chart.setVisibleXRange(100,100);
         chart.setData(data);
+        chart.setXAxisRenderer(new CustomXAxisRenderer(chart.getViewPortHandler(), chart.getXAxis(), chart.getTransformer(YAxis.AxisDependency.LEFT)));
         //chart.setViewPortOffsets(0f, 0f, 0f, 0f);
         chart.animateXY(2000, 2000);
         chart.invalidate();

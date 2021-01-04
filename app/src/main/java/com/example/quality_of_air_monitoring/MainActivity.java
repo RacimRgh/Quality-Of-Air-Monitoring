@@ -123,7 +123,10 @@ public class MainActivity extends AppCompatActivity {
                             openFragment(HomeFragment.newInstance("", ""));
                             return true;
                         case R.id.navigation_monitor:
-                            openFragment(MonitorFragment.newInstance(mLocation.getLatitude(), mLocation.getLongitude()));
+                            if(mLocation != null)
+                                openFragment(MonitorFragment.newInstance(mLocation.getLatitude(), mLocation.getLongitude()));
+                            else
+                                openFragment(MonitorFragment.newInstance(1.0, 1.0));
                             return true;
                         case R.id.navigation_history:
                             openFragment(HistoryFragment.newInstance());
