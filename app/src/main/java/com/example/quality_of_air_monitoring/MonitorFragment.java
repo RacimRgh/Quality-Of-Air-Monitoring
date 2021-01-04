@@ -248,6 +248,14 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
             // The relative humidity sensor returns a single value.
             hmd = event.values[0];
         }
+        
+         if ((tmp<15)||(tmp>100) {
+            notification();
+        }
+
+        if ((hmd<15)||(hmd>100) {
+            notification();
+        }
     }
 
     @Override
