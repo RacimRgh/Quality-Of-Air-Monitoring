@@ -1,5 +1,6 @@
 package com.example.quality_of_air_monitoring;
 
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
@@ -33,48 +34,48 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
+import com.github.mikephil.charting.renderer.XAxisRenderer;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.utils.MPPointF;
+import com.github.mikephil.charting.utils.Transformer;
+import com.github.mikephil.charting.utils.Utils;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.text.DateFormatSymbols;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 //import com.bottomnavigationview.R;
 
 
 public class HistoryFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
     private LineChart chart;
+
+    public SimpleDateFormat dateFormatter;
+    public Date date;
 
     public HistoryFragment() {
         // Required empty public constructor
     }
 
-    public static HistoryFragment newInstance(String param1, String param2) {
+    public static HistoryFragment newInstance() {
         HistoryFragment fragment = new HistoryFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
     }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -84,21 +85,26 @@ public class HistoryFragment extends Fragment {
         charTest();
         return view;
     }
-/*
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        chart = (LineChart) (view.findViewById(R.id.chart));
-        charTest();
+
+    public class CustomXAxisRenderer extends XAxisRenderer {
+        public CustomXAxisRenderer(ViewPortHandler viewPortHandler, XAxis xAxis, Transformer trans) {
+            super(viewPortHandler, xAxis, trans);
+        }
+
+        @Override
+        protected void drawLabel(Canvas c, String formattedLabel, float x, float y, MPPointF anchor, float angleDegrees) {
+            String line[] = formattedLabel.split("\n");
+            Utils.drawXAxisValue(c, line[0], x, y, mAxisLabelPaint, anchor, angleDegrees);
+            Utils.drawXAxisValue(c, line[1], x + mAxisLabelPaint.getTextSize(), y + mAxisLabelPaint.getTextSize(), mAxisLabelPaint, anchor, angleDegrees);
+        }
     }
-    */
 
     public void charTest(){
 
         chart.setDrawGridBackground(false);
         chart.getDescription().setEnabled(true);
-        chart.getDescription().setText("Variation of the temperature and humidity over time");
+        chart.getDescription().setText("Variation of the temperature \n\n" +
+                "and humidity over time\n");
         chart.getDescription().setTextSize(20f);
         chart.getDescription().setTextAlign(Paint.Align.CENTER);
         chart.setDrawBorders(true);
@@ -110,6 +116,7 @@ public class HistoryFragment extends Fragment {
         chart.getXAxis().setDrawGridLines(false);
         chart.getXAxis().setSpaceMax(1f);
         chart.getXAxis().setSpaceMin(1f);
+
         //chart.getAxisLeft().setAxisMinimum(0);
         //chart.getAxisLeft().setAxisMaximum(100);
 
@@ -141,38 +148,19 @@ public class HistoryFragment extends Fragment {
         ArrayList<String> hours = new ArrayList<>();
         // Init list
         int i=0;
-        Log.d("Size: ", ""+list.size());
+        //Log.d("Size: ", ""+list.size());
         for(i=0; i<list.size()*4 +1; i++)
             hours.add("");
         //String[] hours = new String[]{};
         int j=0;
-        for (Weather w : list) {
-            if(j<i)
-            {
-                String log = "\n-Long: " + w.getLon() + "\n-Lat: " + w.getLat() + "\n-Date: " + w.getDate() + "\n-Humidity: " + w.getHmd() + "\n-Temperature: "+w.getTmp();
-                Log.d("\n*********************\n", log);
-                //double val = (Math.random() * 100);
-                float valT = w.getTmp();
-                float valH = w.getHmd();
-                tempValues.add(new Entry(i++, valT));
-                humdValues.add(new Entry(i++, valH));
-
-                // the labels that should be drawn on the XAxis
-                //hours[i] = w.getDate();
-                hours.set(j, w.getDate());
-                //hours.add(w.getDate());
-                j+=4;
-            }
-        }
-
 
         //final String[] quarters = new String[] { "Q1", "Q2", "Q3", "Q4" };
-
+        chart.setXAxisRenderer(new CustomXAxisRenderer(chart.getViewPortHandler(), chart.getXAxis(), chart.getTransformer(YAxis.AxisDependency.LEFT)));
         IAxisValueFormatter formatter = new IAxisValueFormatter() {
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
-                Log.d("Value: ", "v: "+value);
+                //Log.d("Value: ", "v: "+value);
                 if((int) value < list.size())
                     return hours.get((int) value);
                 return "";
@@ -183,8 +171,39 @@ public class HistoryFragment extends Fragment {
         };
 
         XAxis xAxis = chart.getXAxis();
-//        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
+        xAxis.setTextSize(12f);
+        xAxis.setGranularity(2f); // minimum axis-step (interval) is 1
         xAxis.setValueFormatter(formatter);
+
+        for (Weather w : list) {
+            if(j<i)
+            {
+                //String log = "\n-Long: " + w.getLon() + "\n-Lat: " + w.getLat() + "\n-Date: " + w.getDate() + "\n-Humidity: " + w.getHmd() + "\n-Temperature: "+w.getTmp();
+                //Log.d("\n*********************\n", log);
+                //double val = (Math.random() * 100);
+                float valT = w.getTmp();
+                float valH = w.getHmd();
+                tempValues.add(new Entry(j, valT));
+                humdValues.add(new Entry(j, valH));
+
+                // the labels that should be drawn on the XAxis
+                //hours[i] = w.getDate();
+                //hours.set(j, w.getDate());
+                //hours.set(j, "Q"+j);
+                try {
+                    dateFormatter = new SimpleDateFormat("dd-MM-yyyy 'at' HH:mm:ss", Locale.getDefault());
+                    date = dateFormatter.parse(w.getDate());
+                    //Log.d("Time: ", ""+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds());
+                    int month = date.getMonth();
+                    String mo =  new DateFormatSymbols().getMonths()[month];
+                    hours.set(j, date.getDay()+"-"+mo.substring(0,3)+"\n"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+
+                j++;
+            }
+        }
 
         LineDataSet dt = new LineDataSet(tempValues, "Temperature");
         dt.setLineWidth(2.5f);

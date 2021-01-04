@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                             openFragment(MonitorFragment.newInstance(mLocation.getLatitude(), mLocation.getLongitude()));
                             return true;
                         case R.id.navigation_history:
-                            openFragment(HistoryFragment.newInstance("", ""));
+                            openFragment(HistoryFragment.newInstance());
                             return true;
                     }
                     return false;
