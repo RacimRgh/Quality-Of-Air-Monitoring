@@ -44,12 +44,12 @@
         <ProgressBar
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_centerInParent="true"
             android:layout_centerHorizontal="true"
             android:indeterminate="false"
-            android:min="0"
+            android:min="-100"
             android:max="100"
             android:progress="0"
             android:progressDrawable="@drawable/custom_progressbar_drawable"
@@ -61,8 +61,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/progressBar"
             android:layout_centerInParent="true"
-            android:textSize="30dp"
-            android:textAppearance="?android:attr/textAppearanceLarge" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />
     </RelativeLayout>
 
     <TextView
@@ -85,14 +84,15 @@
 
         <ProgressBar
             android:id="@+id/progressBarHumd"
-            style="@android:style/Widget.DeviceDefault.Light.ProgressBar"
-            android:layout_width="250dp"
-            android:layout_height="250dp"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
             android:indeterminate="false"
             android:max="100"
             android:progress="0"
-            android:progressDrawable="@drawable/custom_progressbar_drawable_humidity"
+            android:progressDrawable="@drawable/custom_progressbar_drawable"
             android:secondaryProgress="0" />
 
         <TextView
@@ -101,8 +101,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBottom="@+id/progressBarHumd"
             android:layout_centerInParent="true"
-            android:textSize="30dp"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
+            android:textAppearance="?android:attr/textAppearanceSmall" />
     </RelativeLayout>
 </LinearLayout>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

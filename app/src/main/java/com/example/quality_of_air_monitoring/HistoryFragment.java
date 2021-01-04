@@ -51,8 +51,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-//import com.bottomnavigationview.R;
-
 
 public class HistoryFragment extends Fragment {
 
@@ -139,6 +137,8 @@ public class HistoryFragment extends Fragment {
 
         DatabaseHelper db = new DatabaseHelper(getContext());
         List<Weather> list = db.getAllRows();
+        if(list.size() == 0)
+            return;
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 

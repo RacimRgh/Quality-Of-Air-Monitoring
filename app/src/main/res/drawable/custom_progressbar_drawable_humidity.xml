@@ -3,20 +3,17 @@
     android:fromDegrees="-90"
     android:pivotX="50%"
     android:pivotY="50%"
-    android:toDegrees="90" >
+    android:toDegrees="270" >
 
     <shape
         android:shape="ring"
         android:useLevel="false" >
         <gradient
-            android:centerY="0.50"
-            android:endColor="#FA5858"
-            android:startColor="#0099CC"
+            android:centerY="0.55"
+            android:endColor="#0099CC"
+            android:startColor="#FFFFFF"
             android:type="sweep"
             android:useLevel="false" />
     </shape>
-    <!--
-            android:endColor="#FA5858"
-            android:startColor="#0099CC"-->
 
 </rotate>

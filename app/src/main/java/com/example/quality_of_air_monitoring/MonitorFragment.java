@@ -5,6 +5,7 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -40,6 +41,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static android.content.Context.NOTIFICATION_SERVICE;
+
 public class MonitorFragment extends Fragment implements SensorEventListener {
 
     private SensorManager sensorManager;
@@ -58,6 +61,7 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
 
     private Double lat;
     private Double lgt;
+    static String CurrentDate;
 
     private SwipeRefreshLayout swipeContainer;
 
@@ -87,8 +91,8 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         return fragment;
     }
     
-    public void notification( ){
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+    /*public void notification( ) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
             int notifyID = 1;
             String CHANNEL_ID = "my_channel_01";// Permet d'identifier la notification selon l'id
             CharSequence name = getString(R.string.app_name);// Nom de l'pplication
@@ -117,6 +121,8 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
                 notifManager.createNotificationChannel(mChannel);
             }
             notifManager.notify(notifyID, notification.build());
+        }
+    }*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -264,7 +270,18 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         return view;
     }
 
-    static String CurrentDate;
+    private void showNotification() {
+        // TODO Auto-generated method stub
+        NotificationManager nMN = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
+        Notification n  = new Notification.Builder(getContext())
+                .setContentTitle("Whip And Weep")
+                .setContentText("Whip is On!")
+                .setSmallIcon(R.drawable.ic_tab_home)
+                .setOngoing(true)
+                .build();
+        nMN.notify(0, n);
+    }
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         /**
@@ -279,41 +296,36 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         tmp1 = tmp;
         hmd1 = hmd;
 
-        if(event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE)
-        {
+        if (event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE) {
             // The ambient temperature sensor returns a single value.
             tmp = event.values[0];
         }
-        if(event.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY)
-        {
+        if (event.sensor.getType() == Sensor.TYPE_RELATIVE_HUMIDITY) {
             // The relative humidity sensor returns a single value.
             hmd = event.values[0];
         }
-        
-         if ((tmp<15)||(tmp>100)) {
-            notification();
+            // check if values changed
+            // if not, we don't save them again in the DB
+            if (tmp1 != tmp || hmd1 != hmd) {
+                if ((tmp < 15) || (tmp > 100))
+                    showNotification();
+
+                if ((hmd < 15) || (hmd > 100))
+                    showNotification();
+                progressBar.setProgress((int) tmp);
+                txtProgress.setText(tmp + " °C");
+                progressBarHmd.setProgress((int) hmd);
+                txtProgressHmd.setText(hmd + " %");
+
+                // Get the current date
+                CurrentDate = new SimpleDateFormat("dd-MM-yyyy 'at' HH:mm:ss", Locale.getDefault()).format(new Date());
+
+                Log.d("Db add: ", "\n- " + lat + " - " + lgt + " - " + CurrentDate + " - " + hmd + " - " + tmp);
+
+                Weather weather = new Weather(lat, lgt, CurrentDate, hmd, tmp);
+                db.addWeather(weather);
+            }
         }
-
-        if ((hmd<15)||(hmd>100)) {
-            notification();
-
-        // check if values changed
-        // if not, we don't save them again in the DB
-        if(tmp1 != tmp || hmd1 != hmd){
-            progressBar.setProgress((int)tmp);
-            txtProgress.setText(tmp + " °C");
-            progressBarHmd.setProgress((int)hmd);
-            txtProgressHmd.setText(hmd + " %");
-
-            // Get the current date
-            CurrentDate = new SimpleDateFormat("dd-MM-yyyy 'at' HH:mm:ss", Locale.getDefault()).format(new Date());
-
-            Log.d("Db add: ", "\n- "+ lat + " - "+ lgt + " - "+ CurrentDate + " - "+ hmd + " - " + tmp);
-
-            Weather weather = new Weather(lat, lgt, CurrentDate, hmd, tmp);
-            db.addWeather(weather);
-        }
-    }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
