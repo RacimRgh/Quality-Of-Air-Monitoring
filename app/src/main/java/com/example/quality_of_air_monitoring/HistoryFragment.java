@@ -79,9 +79,12 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_history, container, false);
+        View view = inflater.inflate(R.layout.fragment_history, container, false);
+        chart = (LineChart) (view.findViewById(R.id.chart));
+        charTest();
+        return view;
     }
-
+/*
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -89,8 +92,8 @@ public class HistoryFragment extends Fragment {
         chart = (LineChart) (view.findViewById(R.id.chart));
         charTest();
     }
+    */
 
-    
     public void charTest(){
 
         chart.setDrawGridBackground(false);
@@ -129,34 +132,75 @@ public class HistoryFragment extends Fragment {
 
         DatabaseHelper db = new DatabaseHelper(getContext());
         List<Weather> list = db.getAllRows();
-        for(Weather w : list)
-        {
-            String log = "\n-Long: " + w.getLon() + "\n-Lat: " + w.getLat() + "\n-Date: " + w.getDate() + "\n-Humidity: " + w.getHmd() + "\n-Temperature: "+w.getTmp();
-            Log.d("***********", log);
-        }
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-        String label = "Temperature";
-        int color = Color.RED;
-        for (int z = 0; z < 2; z++) {
 
-            ArrayList<Entry> values = new ArrayList<>();
+        ArrayList<Entry> tempValues = new ArrayList<>();
+        ArrayList<Entry> humdValues = new ArrayList<>();
 
-            for (int i = 0; i < 6; i++) {
-                double val = (Math.random() * 100);
-                values.add(new Entry(i, (float) val));
+        ArrayList<String> hours = new ArrayList<>();
+        // Init list
+        int i=0;
+        Log.d("Size: ", ""+list.size());
+        for(i=0; i<list.size()*4 +1; i++)
+            hours.add("");
+        //String[] hours = new String[]{};
+        int j=0;
+        for (Weather w : list) {
+            if(j<i)
+            {
+                String log = "\n-Long: " + w.getLon() + "\n-Lat: " + w.getLat() + "\n-Date: " + w.getDate() + "\n-Humidity: " + w.getHmd() + "\n-Temperature: "+w.getTmp();
+                Log.d("\n*********************\n", log);
+                //double val = (Math.random() * 100);
+                float valT = w.getTmp();
+                float valH = w.getHmd();
+                tempValues.add(new Entry(i++, valT));
+                humdValues.add(new Entry(i++, valH));
+
+                // the labels that should be drawn on the XAxis
+                //hours[i] = w.getDate();
+                hours.set(j, w.getDate());
+                //hours.add(w.getDate());
+                j+=4;
             }
-
-            LineDataSet d = new LineDataSet(values, label);
-            d.setLineWidth(2.5f);
-            d.setCircleRadius(6f);
-            d.setValueTextSize(10f);
-            d.setColor(color);
-            d.setCircleColor(color);
-            dataSets.add(d);
-            color = Color.BLUE;
-            label = "Humidity";
         }
+
+
+        //final String[] quarters = new String[] { "Q1", "Q2", "Q3", "Q4" };
+
+        IAxisValueFormatter formatter = new IAxisValueFormatter() {
+
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                Log.d("Value: ", "v: "+value);
+                if((int) value < list.size())
+                    return hours.get((int) value);
+                return "";
+            }
+            // we don't draw numbers, so no decimal digits needed
+            //Override
+            //public int getDecimalDigits() {  return 0; }
+        };
+
+        XAxis xAxis = chart.getXAxis();
+//        xAxis.setGranularity(1f); // minimum axis-step (interval) is 1
+        xAxis.setValueFormatter(formatter);
+
+        LineDataSet dt = new LineDataSet(tempValues, "Temperature");
+        dt.setLineWidth(2.5f);
+        dt.setCircleRadius(6f);
+        dt.setValueTextSize(10f);
+        dt.setColor(Color.RED);
+        dt.setCircleColor(Color.RED);
+        dataSets.add(dt);
+
+        LineDataSet dh = new LineDataSet(humdValues, "Humidity");
+        dh.setLineWidth(2.5f);
+        dh.setCircleRadius(6f);
+        dh.setValueTextSize(10f);
+        dh.setColor(Color.BLUE);
+        dh.setCircleColor(Color.BLUE);
+        dataSets.add(dh);
 
         LineData data = new LineData(dataSets);
         //chart.setVisibleXRange(100,100);

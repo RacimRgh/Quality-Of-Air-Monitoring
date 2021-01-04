@@ -78,6 +78,25 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         return fragment;
     }
 
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        db = new DatabaseHelper(getContext());
+        //db.clearWeather();
+
+        if (getArguments() != null) {
+            lat = getArguments().getDouble(ARG_PARAM1);
+            lgt = getArguments().getDouble(ARG_PARAM2);
+        }
+
+        sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
+        mTemp = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        mHumd = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        tempBar(mTemp, tmp);
+        humdBar(mHumd, hmd);
+    }
+
     // Function to display temperature progress bar
     public void tempBar(Sensor mTemp, float tmp){
         if( mTemp != null)
@@ -142,25 +161,6 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
             //Sensor unavailable
             txtProgressHmd.setText("Humidity sensor unavailable !");
         }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        db = new DatabaseHelper(getContext());
-        db.clearWeather();
-
-        if (getArguments() != null) {
-            lat = getArguments().getDouble(ARG_PARAM1);
-            lgt = getArguments().getDouble(ARG_PARAM2);
-        }
-
-        sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
-        mTemp = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-        mHumd = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
-        tempBar(mTemp, tmp);
-        humdBar(mHumd, hmd);
     }
 
    /* @Override
