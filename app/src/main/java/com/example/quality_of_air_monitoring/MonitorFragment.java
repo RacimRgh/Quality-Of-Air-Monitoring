@@ -60,6 +60,41 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         fragment.setArguments(args);
         return fragment;
     }
+    
+    public void notification( ){
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+            int notifyID = 1;
+            String CHANNEL_ID = "my_channel_01";// Permet d'identifier la notification selon l'id
+            CharSequence name = getString(R.string.app_name);// Nom de l'pplication
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            // creer la notification
+
+            Intent notificationIntent = new Intent(getApplicationContext(), LecteurActivity.class);
+            PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+
+
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setPriority(Notification.PRIORITY_DEFAULT)
+                    .setOnlyAlertOnce(true)
+                    .setOngoing(true)
+                    .setSmallIcon(R.mipmap/ic_launcher_round)
+                    .setContentText("Warning temperature ou humidity limit's reached")
+                    .setContentTitle("Quality of Air Monitoring")
+                    .setAutoCancel(true)
+                    .setContentIntent(contentIntent)
+                    .setColorized(true);
+
+            NotificationManager notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notifManager.createNotificationChannel(mChannel);
+            }
+            notifManager.notify(notifyID, notification.build());
+
+        }
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
