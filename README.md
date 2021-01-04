@@ -2,7 +2,7 @@
 
 ## Group members
  - Racim RIGHI: racim458@gmail.com
- - Anissa BELARBIA: b.aniss9@outlook.fr
+ - Anissa BELARBIA: b.anissa9@outlook.fr
  - Marlyse MAPAGA: 
 
 ## Description
