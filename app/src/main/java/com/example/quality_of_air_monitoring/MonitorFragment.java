@@ -96,7 +96,7 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         super.onCreate(savedInstanceState);
 
         db = new DatabaseHelper(getContext());
-        //db.clearWeather();
+        db.clearWeather();
 
         if (getArguments() != null) {
             lat = getArguments().getDouble(ARG_PARAM1);

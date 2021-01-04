@@ -93,9 +93,11 @@ public class HistoryFragment extends Fragment {
         @Override
         protected void drawLabel(Canvas c, String formattedLabel, float x, float y, MPPointF anchor, float angleDegrees) {
             String line[] = formattedLabel.split("\n");
-            Log.d("Line: ", line[0]);
+            //Log.d("Line: ", line[0]+"__"+line[1]);
+
             Utils.drawXAxisValue(c, line[0], x, y, mAxisLabelPaint, anchor, angleDegrees);
-            Utils.drawXAxisValue(c, line[1], x + mAxisLabelPaint.getTextSize(), y + mAxisLabelPaint.getTextSize(), mAxisLabelPaint, anchor, angleDegrees);
+            if(line.length>1)
+                Utils.drawXAxisValue(c, line[1], x + mAxisLabelPaint.getTextSize(), y + mAxisLabelPaint.getTextSize(), mAxisLabelPaint, anchor, angleDegrees);
         }
     }
 
@@ -196,7 +198,7 @@ public class HistoryFragment extends Fragment {
                     date = dateFormatter.parse(w.getDate());
                     int month = date.getMonth();
                     String mo =  new DateFormatSymbols().getMonths()[month];
-                    Log.d("Time: ", ""+date.getDay()+"-"+mo.substring(0,3)+"_"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds());
+                    Log.d("Time: ", ""+date.getDay()+"-"+mo.substring(0,3)+"**"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds());
                     hours.set(j, date.getDay()+"-"+mo.substring(0,3)+"\n"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds());
                 } catch (ParseException e) {
                     e.printStackTrace();
