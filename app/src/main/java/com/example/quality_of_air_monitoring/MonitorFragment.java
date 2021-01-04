@@ -1,5 +1,9 @@
 package com.example.quality_of_air_monitoring;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -9,7 +13,10 @@ import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -70,22 +77,22 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
             NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
             // creer la notification
 
-            Intent notificationIntent = new Intent(getApplicationContext(), LecteurActivity.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, notificationIntent, 0);
+            Intent notificationIntent = new Intent(getContext(), LecteurActivity.class);
+            PendingIntent contentIntent = PendingIntent.getActivity(getContext(), 0, notificationIntent, 0);
 
 
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
                     .setPriority(Notification.PRIORITY_DEFAULT)
                     .setOnlyAlertOnce(true)
                     .setOngoing(true)
-                    .setSmallIcon(R.mipmap/ic_launcher_round)
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
                     .setContentText("Warning temperature ou humidity limit's reached")
                     .setContentTitle("Quality of Air Monitoring")
                     .setAutoCancel(true)
                     .setContentIntent(contentIntent)
                     .setColorized(true);
 
-            NotificationManager notifManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            NotificationManager notifManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 notifManager.createNotificationChannel(mChannel);
@@ -249,11 +256,11 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
             hmd = event.values[0];
         }
         
-         if ((tmp<15)||(tmp>100) {
+         if ((tmp<15)||(tmp>100)) {
             notification();
         }
 
-        if ((hmd<15)||(hmd>100) {
+        if ((hmd<15)||(hmd>100)) {
             notification();
         }
     }
