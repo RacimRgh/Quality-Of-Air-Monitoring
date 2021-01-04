@@ -1,5 +1,4 @@
-package com.example.QualityOfAirMonitoring;
-
+package com.example.quality_of_air_monitoring;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
