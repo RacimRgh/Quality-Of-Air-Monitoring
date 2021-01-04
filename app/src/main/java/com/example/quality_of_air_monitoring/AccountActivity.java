@@ -1,5 +1,7 @@
 package com.example.quality_of_air_monitoring;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 
@@ -16,13 +18,33 @@ public class AccountActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Check if user already connected on phone
+        if (restorePrefData()) {
+            Intent mainActivity = new Intent(getApplicationContext(), MainActivity.class);
+            startActivity(mainActivity);
+            finish();
+        }
+
         setContentView(R.layout.activity_account);
+
         ViewPager viewPager = findViewById(R.id.viewPagerAcc);
 
         AuthenticationPagerAdapter pagerAdapter = new AuthenticationPagerAdapter(getSupportFragmentManager());
         pagerAdapter.addFragment(new LoginFragment());
         pagerAdapter.addFragment(new RegisterFragment());
         viewPager.setAdapter(pagerAdapter);
+    }
+
+    private boolean restorePrefData() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
+        Boolean isLoggedInBefore = pref.getBoolean("isLoggedIn",false);
+        return  isLoggedInBefore;
+        /* FOR TESTING PURPOSES
+        SharedPreferences.Editor editor = pref.edit();
+        editor.clear();
+        editor.commit();
+        return false;*/
     }
 
     class AuthenticationPagerAdapter extends FragmentPagerAdapter {

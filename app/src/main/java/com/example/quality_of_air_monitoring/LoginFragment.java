@@ -1,6 +1,7 @@
 package com.example.quality_of_air_monitoring;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,8 @@ import com.example.quality_of_air_monitoring.accounts_creation.InputValidation;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -58,12 +61,21 @@ public class LoginFragment extends Fragment {
                  * FOR TESTING ONLY
                  * UNCOMMENT verifyAccount() and comment the rest for real app
                  */
-                Intent intent = new Intent(getActivity(), MainActivity.class);
-                startActivity(intent);
-                //verifyAccount();
+                /*Intent intent = new Intent(getActivity(), MainActivity.class);
+                savePrefsData();
+                startActivity(intent);*/
+                verifyAccount();
             }
         });
         return view;
+    }
+
+    private void savePrefsData(String email) {
+        SharedPreferences pref = getActivity().getSharedPreferences("myPrefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = pref.edit();
+        editor.putBoolean("isLoggedIn",true);
+        editor.putString("email", email);
+        editor.commit();
     }
     
     /************************************
@@ -86,6 +98,7 @@ public class LoginFragment extends Fragment {
                 , textInputEditTextPassword.getText().toString().trim())) {
             Intent intent = new Intent(getActivity(), MainActivity.class);
             intent.putExtra("EMAIL", textInputEditTextEmail.getText().toString().trim());
+            savePrefsData(textInputEditTextEmail.getText().toString().trim());
             emptyInputEditText();
             startActivity(intent);
         } else {

@@ -153,6 +153,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+
+    // Get user by email
+    public User getUser(String email) {
+        User u = new User();
+        // Select all query
+        //String selectQuery = "SELECT * FROM " + TABLE_WEATHER + " ORDER BY " + "crtdate DESC LIMIT 5";
+        String selectQuery = "SELECT * FROM " + TABLE_WEATHER + "WHERE user_email = ";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM user WHERE user_email = '" +email + "'" , null);
+
+        // Loop through all the rows and addi the to the list
+        if (cursor.moveToFirst()) {
+            do {
+                u = new User(
+                        (cursor.getInt(0)),
+                        (cursor.getString(1)),
+                        (cursor.getString(2)),
+                        ""
+                );
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+
+        // Return the list
+        return u;
+    }
     // Clear the table weather
     public void clearWeather() {
         SQLiteDatabase db = this.getWritableDatabase();

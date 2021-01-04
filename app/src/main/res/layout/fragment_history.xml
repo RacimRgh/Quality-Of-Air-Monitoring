@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context=".HistoryFragment"
     >
 
@@ -10,15 +11,20 @@
     <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/chart"
             android:layout_width="match_parent"
-            android:layout_height="500dp"
-            android:layout_marginTop="50dp"
-            android:layout_marginBottom="20dp"
+            android:layout_height="470dp"
+            android:layout_marginTop="20dp"
     />
 
-    <!--<com.github.mikephil.charting.charts.BarChart
-        android:id="@+id/chart2"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:layout_marginBottom="20dp"
+        android:background="@color/colorPrimaryTab"
+        android:fontFamily="@font/roboto_regular"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textSize="23dp"
+        android:text="@string/legend"/>
 
 </LinearLayout>

@@ -102,11 +102,11 @@ public class HistoryFragment extends Fragment {
     public void charTest(){
 
         chart.setDrawGridBackground(false);
-        chart.getDescription().setEnabled(true);
-        chart.getDescription().setText("Variation of the temperature \n\n" +
+        chart.getDescription().setEnabled(false);
+        /*chart.getDescription().setText("Variation of the temperature \n\n" +
                 "and humidity over time\n");
         chart.getDescription().setTextSize(20f);
-        chart.getDescription().setTextAlign(Paint.Align.CENTER);
+        chart.getDescription().setTextAlign(Paint.Align.CENTER);*/
         chart.setDrawBorders(true);
 
         chart.getAxisLeft().setEnabled(false);

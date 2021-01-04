@@ -90,39 +90,6 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         fragment.setArguments(args);
         return fragment;
     }
-    
-    /*public void notification( ) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-            int notifyID = 1;
-            String CHANNEL_ID = "my_channel_01";// Permet d'identifier la notification selon l'id
-            CharSequence name = getString(R.string.app_name);// Nom de l'pplication
-            int importance = NotificationManager.IMPORTANCE_HIGH;
-            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
-            // creer la notification
-
-            Intent notificationIntent = new Intent(getContext(), LecteurActivity.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(getContext(), 0, notificationIntent, 0);
-
-
-            NotificationCompat.Builder notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
-                    .setPriority(Notification.PRIORITY_DEFAULT)
-                    .setOnlyAlertOnce(true)
-                    .setOngoing(true)
-                    .setSmallIcon(R.mipmap.ic_launcher_round)
-                    .setContentText("Warning temperature ou humidity limit's reached")
-                    .setContentTitle("Quality of Air Monitoring")
-                    .setAutoCancel(true)
-                    .setContentIntent(contentIntent)
-                    .setColorized(true);
-
-            NotificationManager notifManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                notifManager.createNotificationChannel(mChannel);
-            }
-            notifManager.notify(notifyID, notification.build());
-        }
-    }*/
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -270,16 +237,38 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         return view;
     }
 
-    private void showNotification() {
-        // TODO Auto-generated method stub
-        NotificationManager nMN = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
-        Notification n  = new Notification.Builder(getContext())
-                .setContentTitle("Whip And Weep")
-                .setContentText("Whip is On!")
-                .setSmallIcon(R.drawable.ic_tab_home)
-                .setOngoing(true)
-                .build();
-        nMN.notify(0, n);
+    public void showNotification( ) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            int notifyID = 1;
+            String CHANNEL_ID = "my_channel_01";// Permet d'identifier la notification selon l'id
+            CharSequence name = getString(R.string.app_name);// Nom de l'pplication
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            // creer la notification
+
+            Intent notificationIntent = new Intent(getContext(), MonitorFragment.class);
+            PendingIntent contentIntent = PendingIntent.getActivity(getContext(), 0, notificationIntent, 0);
+
+
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
+                    .setPriority(Notification.PRIORITY_DEFAULT)
+                    .setOnlyAlertOnce(true)
+                    .setOngoing(true)
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setContentText("Warning! Dangerous temperature or humidity values.")
+                    .setContentTitle("Quality of Air Monitoring")
+                    .setAutoCancel(true)
+                    .setSmallIcon(R.drawable.ic_tab_home)
+                    .setContentIntent(contentIntent)
+                    .setColorized(true);
+
+            NotificationManager notifManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notifManager.createNotificationChannel(mChannel);
+            }
+            notifManager.notify(notifyID, notification.build());
+        }
     }
 
     @Override

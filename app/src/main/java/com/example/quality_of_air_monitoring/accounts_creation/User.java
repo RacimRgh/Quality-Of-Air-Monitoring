@@ -6,7 +6,9 @@ public class User {
     private String email;
     private String password;
 
-    public User(){}
+    public User (){}
+
+    public User(int anInt, String string, String cursorString){}
 
     public User(int id, String name, String email, String password) {
         this.id = id;

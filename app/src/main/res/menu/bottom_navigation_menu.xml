@@ -3,13 +3,13 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_tab_home"
-        android:title="Address" />
+        android:title="@string/bottom_navigation_menu_addresses" />
     <item
         android:id="@+id/navigation_monitor"
         android:icon="@drawable/ic_tab_monitor"
-        android:title="Monitor" />
+        android:title="@string/bottom_navigation_menu_monitoring" />
     <item
         android:id="@+id/navigation_history"
         android:icon="@drawable/ic_tab_history"
-        android:title="History" />
+        android:title="@string/bottom_navigation_menu_history" />
 </menu>

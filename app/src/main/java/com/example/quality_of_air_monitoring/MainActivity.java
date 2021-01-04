@@ -9,15 +9,22 @@ import androidx.fragment.app.FragmentTransaction;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.quality_of_air_monitoring.accounts_creation.DatabaseHelper;
+import com.example.quality_of_air_monitoring.accounts_creation.User;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,11 +42,28 @@ public class MainActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private LocationListener locationListener;
 
+    private String email;
+    private String full_name;
+
+    private DatabaseHelper db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        db = new DatabaseHelper(getApplicationContext());
+
+        email = getIntent().getStringExtra("EMAIL");
+
+        if(email == "" || email == null)
+            email = restorePrefData();
+
+        User l = new User();
+        l = db.getUser(email);
+        full_name = l.getName();
+
+
         bottomNavigation = findViewById(R.id.bottom_navigation);
         bottomNavigation.setOnNavigationItemSelectedListener(navigationItemSelectedListener);
         openFragment(HomeFragment.newInstance("", ""));
@@ -66,6 +90,17 @@ public class MainActivity extends AppCompatActivity {
         };
 
         requestLocationUpdates();
+    }
+
+    private String restorePrefData() {
+        SharedPreferences pref = getApplicationContext().getSharedPreferences("myPrefs",MODE_PRIVATE);
+        String email = pref.getString("email","");
+        return  email;
+        /* FOR TESTING PURPOSES
+        SharedPreferences.Editor editor = pref.edit();
+        editor.clear();
+        editor.commit();
+        return false;*/
     }
 
     /*@Override
@@ -120,7 +155,8 @@ public class MainActivity extends AppCompatActivity {
                 @Override public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     switch (item.getItemId()) {
                         case R.id.navigation_home:
-                            openFragment(HomeFragment.newInstance("", ""));
+                            Log.d("User: ", full_name + " - " +email);
+                            openFragment(HomeFragment.newInstance(email, full_name));
                             return true;
                         case R.id.navigation_monitor:
                             if(mLocation != null)
