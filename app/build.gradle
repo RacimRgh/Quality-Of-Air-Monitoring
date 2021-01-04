@@ -41,8 +41,6 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.navigation:navigation-fragment:2.3.2'
     implementation 'androidx.navigation:navigation-ui:2.3.2'
-
-
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
 
