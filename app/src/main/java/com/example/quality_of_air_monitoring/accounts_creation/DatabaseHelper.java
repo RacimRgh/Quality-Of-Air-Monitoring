@@ -1,4 +1,4 @@
-package com.example.QualityOfAirMonitoring.accounts_creation;
+package com.example.quality_of_air_monitoring.accounts_creation;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -112,7 +112,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         List<Weather> l = new ArrayList<>();
 
         // Select all query
-        String selectQuery = "SELECT * FROM " + TABLE_WEATHER + " ORDER BY " + "crtdate DESC LIMIT 5";
+        //String selectQuery = "SELECT * FROM " + TABLE_WEATHER + " ORDER BY " + "crtdate DESC LIMIT 5";
+        String selectQuery = "SELECT * FROM " + TABLE_WEATHER;
 
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(selectQuery, null);
@@ -152,6 +153,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    // Clear the table weather
+    public void clearWeather() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_WEATHER);
+        db.close();
+    }
 
     // Method to delete a user
     public void deleteUser(User user) {

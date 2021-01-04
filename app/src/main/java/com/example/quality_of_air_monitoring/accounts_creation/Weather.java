@@ -1,4 +1,4 @@
-package com.example.QualityOfAirMonitoring.accounts_creation;
+package com.example.quality_of_air_monitoring.accounts_creation;
 
 public class Weather {
     private double lat;

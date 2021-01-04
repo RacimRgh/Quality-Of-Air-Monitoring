@@ -2,9 +2,9 @@ package com.example.quality_of_air_monitoring;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+
 
 public class SplashScreen extends AppCompatActivity {
 

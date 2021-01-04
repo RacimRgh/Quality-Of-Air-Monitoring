@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.quality_of_air_monitoring.R;
 
 
 // import com.bottomnavigationview.R;
