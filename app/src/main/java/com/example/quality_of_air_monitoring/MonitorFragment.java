@@ -1,5 +1,9 @@
 package com.example.quality_of_air_monitoring;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -7,6 +11,11 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.os.Build;
+import android.os.Bundle;
+
+import androidx.core.app.NotificationCompat;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -77,6 +86,37 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         fragment.setArguments(args);
         return fragment;
     }
+    
+    public void notification( ){
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
+            int notifyID = 1;
+            String CHANNEL_ID = "my_channel_01";// Permet d'identifier la notification selon l'id
+            CharSequence name = getString(R.string.app_name);// Nom de l'pplication
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel mChannel = new NotificationChannel(CHANNEL_ID, name, importance);
+            // creer la notification
+
+            Intent notificationIntent = new Intent(getContext(), LecteurActivity.class);
+            PendingIntent contentIntent = PendingIntent.getActivity(getContext(), 0, notificationIntent, 0);
+
+
+            NotificationCompat.Builder notification = new NotificationCompat.Builder(getContext(), CHANNEL_ID)
+                    .setPriority(Notification.PRIORITY_DEFAULT)
+                    .setOnlyAlertOnce(true)
+                    .setOngoing(true)
+                    .setSmallIcon(R.mipmap.ic_launcher_round)
+                    .setContentText("Warning temperature ou humidity limit's reached")
+                    .setContentTitle("Quality of Air Monitoring")
+                    .setAutoCancel(true)
+                    .setContentIntent(contentIntent)
+                    .setColorized(true);
+
+            NotificationManager notifManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                notifManager.createNotificationChannel(mChannel);
+            }
+            notifManager.notify(notifyID, notification.build());
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -249,6 +289,13 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
             // The relative humidity sensor returns a single value.
             hmd = event.values[0];
         }
+        
+         if ((tmp<15)||(tmp>100)) {
+            notification();
+        }
+
+        if ((hmd<15)||(hmd>100)) {
+            notification();
 
         // check if values changed
         // if not, we don't save them again in the DB
