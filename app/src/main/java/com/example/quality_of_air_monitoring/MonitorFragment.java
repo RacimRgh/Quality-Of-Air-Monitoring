@@ -1,4 +1,4 @@
-package com.example.quality_of_air_monitoring;
+package com.example.QualityOfAirMonitoring;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,8 +8,8 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
@@ -21,11 +21,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.quality_of_air_monitoring.R;
+
+import com.example.QualityOfAirMonitoring.accounts_creation.DatabaseHelper;
+import com.example.QualityOfAirMonitoring.accounts_creation.Weather;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,7 +63,7 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         fragment.setArguments(args);
         return fragment;
     }
-    
+
     public void notification( ){
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O){
             int notifyID = 1;
@@ -94,7 +97,6 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
 
         }
     }
-    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +108,13 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         sensorManager = (SensorManager) getActivity().getSystemService(Context.SENSOR_SERVICE);
         mTemp = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
         mHumd = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+
+        //Intent intent = new Intent(getActivity(), SensorActivity.class);
+        //startActivity(intent);
+    }
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
         if( mTemp != null)
         {
             // The sensors exists
@@ -121,7 +130,7 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
                             }
                         });
                         try {
-                            Thread.sleep(50);
+                            Thread.sleep(50000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -151,7 +160,7 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
                             }
                         });
                         try {
-                            Thread.sleep(50);
+                            Thread.sleep(50000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -165,9 +174,6 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
             //Sensor unavailable
             txtProgressHmd.setText("Humidity sensor unavailable !");
         }
-
-        //Intent intent = new Intent(getActivity(), SensorActivity.class);
-        //startActivity(intent);
     }
 
     @Override
@@ -203,12 +209,14 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
                 }
                 text += country;
                 */
-                Log.d("MonitorActivity2", "Address: "+ text);
+                //Log.d("MonitorActivity2", "Address: "+ text);
                 adTextView.setText(text);
             }
         } catch(IOException e){
             e.printStackTrace();
         }
+
+
         //Log.d("MonitorActivity", "Latitude: "+ lat + " - Longitude: " + lgt);
 
         swipeContainer = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
@@ -231,13 +239,23 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
         return view;
     }
 
+    public String getCity (List<Address> addresses) {
+        String city = addresses.get(0).getLocality();
+        return city;
+    }
+
+    public Double getLong () {
+        return lgt;
+    }
+
+    static String CurrentDate;
     @Override
     public void onSensorChanged(SensorEvent event) {
         txtProgress = (TextView) getView().findViewById(R.id.txtProgress);
         progressBar = (ProgressBar) getView().findViewById(R.id.progressBar);
         txtProgressHmd = (TextView) getView().findViewById(R.id.txtProgressHumd);
         progressBarHmd = (ProgressBar) getView().findViewById(R.id.progressBarHumd);
-        //Log.d("Type: ", ""+event.sensor.getType());
+        Log.d("Type: ", ""+event.sensor.getType());
         if(event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE)
         {
             // The ambient temperature sensor returns a single value.
@@ -248,14 +266,22 @@ public class MonitorFragment extends Fragment implements SensorEventListener {
             // The relative humidity sensor returns a single value.
             hmd = event.values[0];
         }
-        
-         if ((tmp<15)||(tmp>100) {
+        // Get the current date
+        CurrentDate = new SimpleDateFormat("dd-MM-yyyy 'at' HH:mm:ss", Locale.getDefault()).format(new Date());
+        if ((tmp<15)||(tmp>100) {
             notification();
         }
 
         if ((hmd<15)||(hmd>100) {
             notification();
         }
+        Weather weather = new Weather(lat, lgt, CurrentDate, hmd, tmp);
+        DatabaseHelper db = new DatabaseHelper(getContext());
+        db.addWeather(weather);
+    }
+
+    public static String getCurrentDate(){
+        return CurrentDate;
     }
 
     @Override
