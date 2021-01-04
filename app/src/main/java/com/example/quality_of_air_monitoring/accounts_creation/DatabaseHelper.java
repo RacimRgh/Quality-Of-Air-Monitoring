@@ -23,6 +23,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_USER_EMAIL = "user_email";
     private static final String COLUMN_USER_PASSWORD = "user_password";
 
+    // Weather table name
+    private static final String TABLE_WEATHER = "weather";
+    // User Table Columns names
+    //private static final String COLUMN_WEATHER_ID_USER = "user_id";
+    private static final String COLUMN_WEATHER_DATE = "crtdate";
+    private static final String COLUMN_WEATHER_LAT = "latitude";
+    private static final String COLUMN_WEATHER_LON = "longitude";
+    private static final String COLUMN_WEATHER_HMD = "humidity" ;
+    private static final String COLUMN_WEATHER_TMP = "temperature";
+
     // Create table sql query
     private String CREATE_USER_TABLE = "CREATE TABLE " + TABLE_USER + "("
             + COLUMN_USER_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + COLUMN_USER_NAME + " TEXT,"
@@ -31,6 +41,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Drop table sql query
     private String DROP_USER_TABLE = "DROP TABLE IF EXISTS " + TABLE_USER;
 
+    // Create table sql query
+    private String CREATE_WEATHER_TABLE = "CREATE TABLE " + TABLE_WEATHER + "("
+            + COLUMN_WEATHER_DATE + " TEXT," + COLUMN_WEATHER_LAT + " TEXT," +
+            COLUMN_WEATHER_LON + " TEXT," + COLUMN_WEATHER_HMD + " TEXT,"
+            + COLUMN_WEATHER_TMP + " TEXT" +")";
+
+    private String DROP_WEATHER_TABLE = "DROP TABLE IF EXISTS " + TABLE_WEATHER;
+
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
@@ -38,12 +56,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(CREATE_USER_TABLE);
+        db.execSQL(CREATE_WEATHER_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //Drop Users table if exists
         db.execSQL(DROP_USER_TABLE);
+        db.execSQL(DROP_WEATHER_TABLE);
         // Create tables again
         onCreate(db);
     }
@@ -60,7 +80,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-
     // Method to update user records
     public void updateUser(User user) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -71,6 +90,73 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         // updating row
         db.update(TABLE_USER, values, COLUMN_USER_ID + " = ?",
                 new String[]{String.valueOf(user.getId())});
+        db.close();
+    }
+
+    public void addWeather(Weather w) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        //values.put(COLUMN_WEATHER_ID_USER, w.getId());
+        values.put(COLUMN_WEATHER_DATE, (w.getDate()));
+        values.put(COLUMN_WEATHER_LAT, Double.toString(w.getLat()));
+        values.put(COLUMN_WEATHER_LON, Double.toString(w.getLon()));
+        values.put(COLUMN_WEATHER_HMD, Float.toString(w.getHmd()));
+        values.put(COLUMN_WEATHER_TMP, Float.toString(w.getTmp()));
+        // Inserting Row
+        db.insert(TABLE_WEATHER, null, values);
+        db.close();
+    }
+
+    // Get all rows
+    public List<Weather> getAllRows() {
+        List<Weather> l = new ArrayList<>();
+
+        // Select all query
+        //String selectQuery = "SELECT * FROM " + TABLE_WEATHER + " ORDER BY " + "crtdate DESC LIMIT 5";
+        String selectQuery = "SELECT * FROM " + TABLE_WEATHER;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+
+        // Loop through all the rows and addi the to the list
+        if (cursor.moveToFirst()) {
+            do {
+                Weather w = new Weather(
+                (cursor.getDouble(1)),
+                (cursor.getDouble(2)),
+                (cursor.getString(0)),
+                (cursor.getFloat(3)),
+                (cursor.getFloat(4))
+                );
+             /*   String i;
+                i= (cursor.getString(0));
+                    Date d = null;
+                    try {
+                        d = new SimpleDateFormat("dd/MM/yyyy 'at' HH:mm:ss").parse(String.valueOf(i));
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+*/
+                // Add row to list
+                l.add(w);
+
+            } while (cursor.moveToNext());
+
+
+        }
+
+        cursor.close();
+        db.close();
+
+        // Return the list
+        return l;
+    }
+
+
+    // Clear the table weather
+    public void clearWeather() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("DELETE FROM " + TABLE_WEATHER);
         db.close();
     }
 

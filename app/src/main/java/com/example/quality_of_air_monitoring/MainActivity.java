@@ -1,5 +1,4 @@
 package com.example.quality_of_air_monitoring;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -8,8 +7,8 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -19,8 +18,6 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     private LocationManager locationManager;
     private LocationListener locationListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressLint("MissingPermission")
     private void requestLocationUpdates() {
         // Check permission
         if (ContextCompat.checkSelfPermission(this,
@@ -124,16 +123,10 @@ public class MainActivity extends AppCompatActivity {
                             openFragment(HomeFragment.newInstance("", ""));
                             return true;
                         case R.id.navigation_monitor:
-                        {
-                            if (mLocation != null)
-                                openFragment(MonitorFragment.newInstance(mLocation.getLatitude(), mLocation.getLongitude()));
-                            else
-                                openFragment(MonitorFragment.newInstance(0.0, 0.0));
-
-                        }
+                            openFragment(MonitorFragment.newInstance(mLocation.getLatitude(), mLocation.getLongitude()));
                             return true;
                         case R.id.navigation_history:
-                            openFragment(HistoryFragment.newInstance("", ""));
+                            openFragment(HistoryFragment.newInstance());
                             return true;
                     }
                     return false;

@@ -12,8 +12,6 @@ import android.os.Handler;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import java.util.List;
-
 public class SensorActivity extends AppCompatActivity implements SensorEventListener {
 
     private SensorManager sensorManager;

@@ -27,4 +27,9 @@
     <string name="error_email_exists">Email already exists</string>
     <string name="error_password_match">Passwords does not match</string>
     <string name="error_valid_email_password">Wrong Email or Password</string>
+    <string name="chart_description1">Set Bar Chart Description Here</string>
+
+    <!-- -->
+    <string name="humidity">Current humidity</string>
+    <string name="temperature">Current temperature</string>
 </resources>
